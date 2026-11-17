@@ -3,218 +3,1367 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Khoya-Paya · Railway Lost & Found</title>
+<title>Khoya·Paya — Find your lost item</title>
 <meta name="description" content="Describe or photograph what you lost on an Indian Railways train and see matching items held at lost property offices.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=Noto+Serif+Devanagari:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f1e7; --paper: #fffdf8; --ink: #1d2433; --muted: #5d6576; --line: #e4dccb;
-    --brand: #1f3a6e; --brand-ink: #fff; --accent: #e2711d; --ok: #1d7a4b; --warn: #a86b00; --weak: #8a8f99;
-    --shadow: 0 1px 2px rgba(29,36,51,.06), 0 6px 20px rgba(29,36,51,.06);
+    --color-paper: #F4EDE1;
+    --color-card: #FBF7F0;
+    --color-sand: #EBE1CF;
+    --color-linen: #D8CAB2;
+    --color-field: #8C7A60;
+    --color-ink: #2A241D;
+    --color-muted: #5F5446;
+    --color-espresso: #3B2F24;
+    --color-rust: #9A4320;
+    --color-rust-hover: #6E2F16;
+    --color-olive: #4F5B26;
+    --color-amber: #8A6A3A;
+    --color-sage: #E4E6CF;
+    --color-input-bg: #FFFDF9;
+    --font-display: Fraunces, Georgia, serif;
+    --font-body: Inter, system-ui, -apple-system, sans-serif;
+    --font-hindi: 'Noto Serif Devanagari', serif;
+    --radius-sm: 10px;
+    --radius-md: 12px;
+    --radius-lg: 14px;
+    --radius-card: 18px;
+    --radius-card-large: 20px;
+    --radius-pill: 999px;
+    --shadow-card: 0 1px 2px rgba(59,47,36,0.06), 0 12px 32px -12px rgba(59,47,36,0.18);
+    --shadow-subtle: 0 1px 2px rgba(59,47,36,0.06);
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #11151d; --paper: #1a202b; --ink: #eef0f4; --muted: #a2a9b7; --line: #2c3442;
-      --brand: #8fb0ef; --brand-ink: #0d1422; --accent: #f29a52; --ok: #5cc690; --warn: #e3b448; --weak: #7d8492;
-      --shadow: 0 1px 2px rgba(0,0,0,.3); }
-  }
+
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Inter, system-ui, sans-serif; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px 64px; }
-  header { padding: 32px 0 20px; }
-  .rail { height: 6px; background: repeating-linear-gradient(90deg, var(--brand) 0 28px, transparent 28px 40px); opacity: .9; }
-  h1 { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: clamp(32px, 6vw, 48px); line-height: 1.05; margin: 18px 0 6px; letter-spacing: -.01em; }
-  h1 span { color: var(--accent); }
-  .lede { color: var(--muted); max-width: 640px; margin: 0; }
-  .demo { margin-top: 14px; font-size: 13px; color: var(--muted); border-left: 3px solid var(--accent); padding: 2px 0 2px 10px; }
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  form { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); display: grid; gap: 16px; }
-  label { font-weight: 600; font-size: 14px; display: block; margin-bottom: 6px; }
-  .hint { font-weight: 400; color: var(--muted); }
-  textarea, input, select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-  textarea { min-height: 84px; resize: vertical; }
-  textarea:focus, input:focus, select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .chip { font-size: 13px; border: 1px dashed var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
-  .chip:hover { color: var(--ink); border-color: var(--brand); }
-  .row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
-  .filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; min-height: 84px; cursor: pointer; background: var(--bg); }
-  .drop img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
-  .drop small { color: var(--muted); }
-  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  button.primary { background: var(--brand); color: var(--brand-ink); border: 0; border-radius: 10px; padding: 12px 22px; font: 600 16px Inter, sans-serif; cursor: pointer; }
-  button.primary:disabled { opacity: .6; cursor: progress; }
-  button.ghost { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; }
-  .status { color: var(--muted); font-size: 14px; }
-  .error { color: #c0392b; }
+  a { color: var(--color-rust); text-decoration: none; }
+  a:hover { color: var(--color-rust-hover); text-decoration: underline; }
+  :focus-visible { outline: 3px solid var(--color-rust); outline-offset: 2px; }
 
-  .understood { margin: 26px 0 12px; font-size: 14px; color: var(--muted); }
-  .understood b { color: var(--ink); font-weight: 600; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
-  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
-  .card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--line); }
-  .body { padding: 12px 14px 14px; display: grid; gap: 6px; flex: 1; }
-  .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-  .cat { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 18px; text-transform: capitalize; }
-  .badge { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
-  .strong { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
-  .possible { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
-  .weak { background: color-mix(in srgb, var(--weak) 15%, transparent); color: var(--weak); }
-  .meta { font-size: 13px; color: var(--muted); }
-  .note { font-size: 14px; }
-  .reasons { font-size: 12px; color: var(--accent); }
-  .card button { margin-top: auto; border: 1px solid var(--brand); color: var(--brand); background: transparent; border-radius: 8px; padding: 8px; font: 600 14px Inter, sans-serif; cursor: pointer; }
-  .card button.done { background: var(--brand); color: var(--brand-ink); }
-  .claim { font-size: 13px; background: var(--bg); border-radius: 8px; padding: 8px 10px; }
-  .credit { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
-  .credit a { color: inherit; }
-  footer { margin-top: 48px; font-size: 13px; color: var(--muted); }
-  footer a { color: inherit; }
-  @media (max-width: 720px) { .row, .filters { grid-template-columns: 1fr; } }
+  /* Prototype Disclaimer Banner */
+  .prototype-banner {
+    background: var(--color-sand);
+    border-bottom: 1px solid var(--color-linen);
+  }
+  .banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .banner-icon { flex-shrink: 0; }
+  .prototype-banner p { margin: 0; }
+
+  /* Header */
+  .site-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .brand-link {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .brand-link:hover { text-decoration: none; }
+  .wordmark-en {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .brand-dot { color: var(--color-rust); }
+  .wordmark-hi {
+    font-family: var(--font-hindi);
+    font-size: 16px;
+    color: var(--color-muted);
+  }
+  .site-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  .nav-link:hover { background: var(--color-sand); text-decoration: none; }
+
+  /* Main Container */
+  .main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 24px 64px;
+  }
+
+  /* Hero & Layout Split */
+  .hero-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+  }
+  .hero-main {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .hero-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 640px;
+  }
+  .hero-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .hero-lede {
+    margin: 0;
+    font-size: 18px;
+    color: var(--color-muted);
+  }
+
+  /* Search Card Form */
+  .search-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-linen);
+    border-radius: var(--radius-card-large);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    box-shadow: var(--shadow-card);
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .form-label {
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--color-ink);
+  }
+  .form-help {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  textarea, input, select {
+    font: inherit;
+    color: var(--color-ink);
+    background: var(--color-input-bg);
+    border: 1.5px solid var(--color-field);
+    border-radius: var(--radius-sm);
+    padding: 0 14px;
+    min-height: 48px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  textarea {
+    font-size: 17px;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    resize: vertical;
+    min-height: 96px;
+  }
+  textarea::placeholder, input::placeholder, select::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
+  }
+
+  /* Chips */
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .chips-label {
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .chip-btn {
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-ink);
+    background: var(--color-sand);
+    border: 1px solid var(--color-linen);
+    border-radius: var(--radius-pill);
+    padding: 0 14px;
+    min-height: 36px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .chip-btn:hover {
+    background: var(--color-card);
+    border-color: var(--color-field);
+  }
+
+  /* Photo Upload Dropzone */
+  .drop-well {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    border: 1.5px dashed var(--color-field);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    background: var(--color-paper);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .drop-well:hover, .drop-well.dragover {
+    border-color: var(--color-rust);
+    background: #FDF9F2;
+  }
+  .camera-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--color-sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .drop-text-col {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+  .drop-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .optional-tag {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+  .drop-desc {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-muted);
+    display: block;
+  }
+  .btn-choose-mock {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--color-espresso);
+    color: var(--color-espresso);
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--color-card);
+    pointer-events: none;
+  }
+  .preview-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--color-linen);
+    display: block;
+  }
+
+  /* Collapsible Filters */
+  .filters-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .filter-toggle-btn {
+    font: inherit;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--color-ink);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filter-toggle-sub {
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+  .chevron-svg {
+    transition: transform 0.2s ease;
+  }
+  .filter-toggle-btn[aria-expanded="true"] .chevron-svg {
+    transform: rotate(180deg);
+  }
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .filters-grid[hidden] {
+    display: none;
+  }
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .filter-field label {
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  /* Action Bar */
+  .form-actions-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-linen);
+  }
+  .btn-search {
+    font: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 28px;
+    border-radius: var(--radius-md);
+    border: 0;
+    background: var(--color-espresso);
+    color: var(--color-card);
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-search:hover { background: #251d16; }
+  .btn-search:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-clear {
+    font: inherit;
+    min-height: 52px;
+    padding: 0 18px;
+    border-radius: var(--radius-md);
+    border: 0;
+    background: none;
+    color: var(--color-muted);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .btn-clear:hover { color: var(--color-ink); }
+  .status-text {
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .status-text.error {
+    color: #A92A2A;
+    font-weight: 500;
+  }
+
+  /* Aside "How It Works" */
+  .how-aside {
+    flex: 1 1 300px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 8px;
+  }
+  .how-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 24px;
+  }
+  .how-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .how-step {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+  .how-step:last-child { padding-bottom: 0; }
+  .step-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-espresso);
+    color: var(--color-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .step-title {
+    margin: 0;
+    font-weight: 600;
+  }
+  .step-desc {
+    margin: 2px 0 0;
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+  .privacy-card {
+    background: var(--color-sand);
+    border-radius: var(--radius-lg);
+    padding: 16px 18px;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .privacy-card p { margin: 0; }
+  .privacy-card strong { color: var(--color-ink); font-weight: 600; }
+
+  /* Query Understanding Indicator */
+  .understood-banner {
+    margin: 36px 0 16px;
+    padding: 14px 18px;
+    background: var(--color-sand);
+    border: 1px solid var(--color-linen);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .understood-banner b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .understood-banner[hidden] { display: none; }
+
+  /* Results Section */
+  .results-section {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .results-section[hidden] { display: none; }
+  .results-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .results-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .results-heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 32px;
+  }
+  .results-sub {
+    margin: 0;
+    color: var(--color-muted);
+  }
+  .active-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 6px 0 14px;
+    border-radius: var(--radius-pill);
+    background: var(--color-card);
+    border: 1px solid var(--color-linen);
+    font-size: 14px;
+  }
+  .filter-tag-remove {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .filter-tag-remove:hover {
+    background: var(--color-sand);
+  }
+
+  /* Results Grid */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  /* Result Card */
+  .result-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-linen);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-subtle);
+  }
+  .card-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--color-sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .card-fallback-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+  .card-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .card-badge.strong {
+    background: var(--color-olive);
+    color: var(--color-card);
+  }
+  .card-badge.good {
+    background: var(--color-amber);
+    color: var(--color-card);
+  }
+  .card-badge.possible {
+    background: var(--color-card);
+    color: var(--color-ink);
+    border: 1px solid var(--color-field);
+  }
+  .card-body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-grow: 1;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-transform: capitalize;
+  }
+  .meter-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .match-meter {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-sand);
+    overflow: hidden;
+  }
+  .match-meter-bar {
+    height: 100%;
+    border-radius: var(--radius-pill);
+  }
+  .match-meter-bar.strong { background: var(--color-olive); }
+  .match-meter-bar.good { background: var(--color-amber); }
+  .match-meter-bar.possible { background: var(--color-field); }
+
+  .meta-dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 6px 10px;
+    font-size: 14px;
+    color: var(--color-muted);
+    align-items: start;
+  }
+  .meta-dl dt { margin: 0; display: flex; align-items: center; }
+  .meta-dl dd { margin: 0; color: var(--color-ink); }
+  .card-note {
+    font-size: 14px;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .card-reasons {
+    font-size: 13px;
+    color: var(--color-rust);
+    font-weight: 500;
+  }
+  .card-actions-area {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-actions-row {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-mine {
+    font: inherit;
+    flex: 1 1 auto;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    border: 0;
+    background: var(--color-espresso);
+    color: var(--color-card);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-mine:hover { background: #251d16; }
+  .btn-details {
+    font: inherit;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--color-field);
+    background: none;
+    color: var(--color-ink);
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-details:hover { background: var(--color-sand); }
+  .claim-box {
+    background: var(--color-sage);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .claim-check-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .claim-text {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-ink);
+  }
+  .btn-undo {
+    font: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--color-rust);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .card-credit {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-muted);
+    overflow-wrap: anywhere;
+  }
+  .card-credit a { color: inherit; }
+
+  /* "Not Here Yet?" Callout */
+  .not-here-callout {
+    margin-top: 16px;
+    background: var(--color-sand);
+    border-radius: var(--radius-card);
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .not-here-info { flex: 1 1 360px; }
+  .not-here-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 22px;
+  }
+  .not-here-desc {
+    margin: 4px 0 0;
+    color: var(--color-muted);
+  }
+  .btn-search-no-filters {
+    font: inherit;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-espresso);
+    background: var(--color-card);
+    color: var(--color-espresso);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-search-no-filters:hover { background: #F5EFE4; }
+
+  /* Empty State */
+  .empty-state {
+    padding: 32px 24px;
+    background: var(--color-card);
+    border: 1px solid var(--color-linen);
+    border-radius: var(--radius-card);
+    text-align: center;
+    color: var(--color-muted);
+  }
+
+  /* Technical Footer */
+  .site-footer {
+    border-top: 1px solid var(--color-linen);
+    margin-top: 48px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .footer-inner p { margin: 0; }
+  .footer-nav { display: flex; gap: 20px; }
+  .footer-nav a { color: var(--color-muted); text-decoration: none; }
+  .footer-nav a:hover { color: var(--color-rust); text-decoration: underline; }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 768px) {
+    .site-header { padding: 16px 18px; }
+    .wordmark-en { font-size: 24px; }
+    .main-container { padding: 16px 18px 48px; }
+    .hero-section { gap: 24px; }
+    .search-card { padding: 20px 18px; border-radius: 16px; }
+    .results-grid { grid-template-columns: 1fr; }
+    .not-here-callout { padding: 20px 18px; }
+  }
 </style>
 </head>
 <body>
-<div class="rail"></div>
-<div class="wrap">
-  <header>
-    <h1>Khoya<span>·</span>Paya</h1>
-    <p class="lede">Left something on a train? Describe it in your own words or upload an old photo of it. We match it against items found by railway staff and held at lost property offices.</p>
-    <p class="demo">Prototype. The found-item records are synthetic demo data and the photos come from Wikimedia Commons. Nothing here is an official Indian Railways service.</p>
-  </header>
 
-  <form id="f">
-    <div class="row">
-      <div>
-        <label for="desc">What did you lose? <span class="hint">(colour, brand, anything distinctive)</span></label>
-        <textarea id="desc" name="description" maxlength="500" placeholder="e.g. black backpack with a red keychain, lost on 12951 near Borivali"></textarea>
-        <div class="chips" id="chips"></div>
-      </div>
-      <div>
-        <label for="photo">Have a photo of it? <span class="hint">(optional)</span></label>
-        <label class="drop" id="drop" for="photo">
-          <img id="preview" alt="" hidden>
-          <span id="dropText"><b>Choose a photo</b><br><small>JPG or PNG, under 6 MB</small></span>
-        </label>
-        <input id="photo" name="photo" type="file" accept="image/*" hidden>
-      </div>
-    </div>
-    <div class="filters">
-      <div><label for="train">Train</label><select id="train" name="train_no"><option value="">Any train</option></select></div>
-      <div><label for="station">Station</label><select id="station" name="station"><option value="">Any station</option></select></div>
-      <div><label for="date">Date you lost it</label><input id="date" name="lost_date" type="date"></div>
-    </div>
-    <div class="actions">
-      <button class="primary" id="go" type="submit">Search found items</button>
-      <button class="ghost" type="reset" id="clear">Clear</button>
-      <span class="status" id="status" role="status"></span>
-    </div>
-  </form>
-
-  <div class="understood" id="understood" hidden></div>
-  <div class="grid" id="results"></div>
-
-  <footer>
-    Built with CLIP (ONNX Runtime) · FastAPI · Docker · Vercel. <a href="/health">health</a> · <a href="/metrics">metrics</a> · <a href="/docs">API docs</a>
-  </footer>
+<!-- Prototype Disclaimer Banner -->
+<div class="prototype-banner">
+  <div class="banner-inner">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="banner-icon">
+      <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 16v-5 M12 8h.01"></path>
+    </svg>
+    <p>Prototype. Found-item records are synthetic demo data, photos are from Wikimedia Commons, and this is not an official Indian Railways service.</p>
+  </div>
 </div>
+
+<!-- Bilingual Brand Header -->
+<header class="site-header">
+  <a href="#top" class="brand-link">
+    <span class="wordmark-en">Khoya<span class="brand-dot">·</span>Paya</span>
+    <span lang="hi" class="wordmark-hi">खोया-पाया</span>
+  </a>
+  <nav aria-label="Main" class="site-nav">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#data" class="nav-link">About the data</a>
+  </nav>
+</header>
+
+<!-- Main Workspace -->
+<main id="top" class="main-container">
+  <section class="hero-section" aria-labelledby="hero-title">
+    
+    <!-- Left Column: Search Form -->
+    <div class="hero-main">
+      <div class="hero-intro">
+        <h1 id="hero-title" class="hero-title">Left something on a train?</h1>
+        <p class="hero-lede">Describe it in your own words, add a photo if you have one, and we'll check it against items handed in at railway lost property offices. Closest matches come first.</p>
+      </div>
+
+      <form id="f" class="search-card" aria-label="Search found items">
+        
+        <!-- Text description input -->
+        <div class="form-group">
+          <label for="desc" class="form-label">What did you lose?</label>
+          <p id="desc-help" class="form-help">Colour, brand, size, stickers, anything distinctive. Write it the way you'd tell a friend.</p>
+          <textarea id="desc" name="description" maxlength="500" rows="3" aria-describedby="desc-help" placeholder="e.g. Black Wildcraft backpack with a red keychain, laptop inside"></textarea>
+          <div class="chips-row" id="chips">
+            <span class="chips-label">Try:</span>
+          </div>
+        </div>
+
+        <!-- Photo drag-and-drop upload well -->
+        <label class="drop-well" id="drop" for="photo">
+          <div class="camera-icon-box">
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B2F24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z M12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"></path>
+            </svg>
+          </div>
+          <div class="drop-text-col">
+            <p class="drop-title">Add a photo <span class="optional-tag">(optional)</span></p>
+            <span id="dropText"><span class="drop-desc">An old photo of the item helps a lot. Drag it here, or choose a file. JPG or PNG, up to 6 MB.</span></span>
+          </div>
+          <img id="preview" alt="Selected photo preview" class="preview-thumb" hidden>
+          <span class="btn-choose-mock">Choose photo</span>
+          <input id="photo" name="photo" type="file" accept="image/jpeg,image/png" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;">
+        </label>
+
+        <!-- Collapsible Filters ("Narrow it down") -->
+        <div class="filters-wrapper">
+          <button type="button" id="toggleFilters" class="filter-toggle-btn" aria-expanded="false" aria-controls="filters">
+            <span>Narrow it down</span>
+            <span class="filter-toggle-sub">· optional, but makes results sharper</span>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2A241D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-svg">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          </button>
+
+          <div id="filters" class="filters-grid" hidden>
+            <div class="filter-field">
+              <label for="train">Train</label>
+              <select id="train" name="train_no">
+                <option value="">Any train</option>
+              </select>
+            </div>
+            <div class="filter-field">
+              <label for="station">Station</label>
+              <select id="station" name="station">
+                <option value="">Any station</option>
+              </select>
+            </div>
+            <div class="filter-field">
+              <label for="date">Date you lost it</label>
+              <input id="date" name="lost_date" type="date">
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Action Buttons -->
+        <div class="form-actions-bar">
+          <button class="btn-search" id="go" type="submit">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M20 20l-4-4"></path>
+            </svg>
+            Search found items
+          </button>
+          <button class="btn-clear" type="reset" id="clear">Clear</button>
+          <span class="status-text" id="status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: How It Works & Privacy -->
+    <aside id="how" aria-labelledby="how-title" class="how-aside">
+      <h2 id="how-title" class="how-title">How it works</h2>
+      <ol class="how-steps">
+        <li class="how-step">
+          <span class="step-badge">1</span>
+          <div>
+            <p class="step-title">Describe it, or show it</p>
+            <p class="step-desc">Words, a photo, or both. Train and station are optional extras.</p>
+          </div>
+        </li>
+        <li class="how-step">
+          <span class="step-badge">2</span>
+          <div>
+            <p class="step-title">We compare every found item</p>
+            <p class="step-desc">An image–text model ranks each record by how closely it fits what you described.</p>
+          </div>
+        </li>
+        <li class="how-step">
+          <span class="step-badge">3</span>
+          <div>
+            <p class="step-title">Claim it at the office</p>
+            <p class="step-desc">Mark the one that's yours, then collect it from the lost property office shown, with ID.</p>
+          </div>
+        </li>
+      </ol>
+      <div class="privacy-card">
+        <p><strong>Privacy:</strong> faces in found-item photos are blurred, location data is stripped, and your search text is never stored, only a hash.</p>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Query Understanding Breadcrumb -->
+  <div class="understood-banner" id="understood" hidden aria-live="polite"></div>
+
+  <!-- Results Section -->
+  <section id="results-container" class="results-section" aria-labelledby="results-title" aria-live="polite" hidden>
+    <div class="results-header">
+      <div class="results-header-text">
+        <h2 id="results-title" class="results-heading">0 possible matches</h2>
+        <p class="results-sub">Closest first. A strong match is worth a trip to the office.</p>
+      </div>
+      <div id="active-filters" class="active-filters" aria-label="Active filters"></div>
+    </div>
+
+    <div class="results-grid" id="results"></div>
+
+    <!-- "Not here yet?" Bottom Callout -->
+    <div id="not-here-box" class="not-here-callout">
+      <div class="not-here-info">
+        <h3 class="not-here-title">Not here yet?</h3>
+        <p class="not-here-desc">Items can take a few days to reach a lost property office. Try describing it differently, or search without the train and station.</p>
+      </div>
+      <button type="button" id="btn-no-filters" class="btn-search-no-filters">Search without filters</button>
+    </div>
+  </section>
+</main>
+
+<!-- Technical Footer -->
+<footer id="data" class="site-footer">
+  <div class="footer-inner">
+    <p>Built with CLIP (ONNX Runtime) · FastAPI · Docker · Vercel</p>
+    <nav aria-label="Developer links" class="footer-nav">
+      <a href="/health">Health</a>
+      <a href="/metrics">Metrics</a>
+      <a href="/docs">API docs</a>
+    </nav>
+  </div>
+</footer>
 
 <script>
 const $ = (id) => document.getElementById(id);
+
+const CATEGORY_ICONS = {
+  backpack: 'M8 7V5a4 4 0 0 1 8 0v2 M6 7h12a1 1 0 0 1 1 1v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 1-1z M9 13h6v3H9z',
+  umbrella: 'M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z M12 12v7a2 2 0 0 1-4 0',
+  phone: 'M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z M11 18h2',
+  bottle: 'M10 2h4v3l1 2v13a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V7l1-2z M9 11h6',
+  suitcase: 'M9 6V4h6v2 M4 6h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z M8 6v14 M16 6v14',
+  wallet: 'M4 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4z M4 6l12-3v3 M16 13h4'
+};
+
+const DEFAULT_ICON = 'M9 6V4h6v2 M4 6h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z M8 6v14 M16 6v14';
+
 const examples = [
-  "blue umbrella",
-  "black laptop bag left on Deccan Queen",
-  "red suitcase with wheels, 12951",
-  "steel tiffin box",
-  "brown leather wallet at Dadar",
+  "Black backpack with a red keychain",
+  "Blue umbrella",
+  "Steel tiffin box",
+  "Brown leather wallet at Dadar",
+  "Black laptop bag on Deccan Queen"
 ];
+
 let lastQueryId = null;
+let lastSearchPayload = null;
+const claimedItems = new Set();
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 
+// Populate Quick Chips
 examples.forEach(t => {
   const b = document.createElement("button");
-  b.type = "button"; b.className = "chip"; b.textContent = t;
-  b.onclick = () => { $("desc").value = t; $("f").requestSubmit(); };
+  b.type = "button";
+  b.className = "chip-btn";
+  b.textContent = t;
+  b.onclick = () => {
+    $("desc").value = t;
+    $("f").requestSubmit();
+  };
   $("chips").appendChild(b);
 });
 
+// Load Metadata
 fetch("/api/meta").then(r => r.json()).then(m => {
-  m.trains.forEach(t => $("train").add(new Option(`${t.train_no} · ${t.train_name}`, t.train_no)));
-  m.stations.forEach(s => $("station").add(new Option(s, s)));
+  if (m.trains) {
+    m.trains.forEach(t => $("train").add(new Option(`${t.train_no} · ${t.train_name}`, t.train_no)));
+  }
+  if (m.stations) {
+    m.stations.forEach(s => $("station").add(new Option(s, s)));
+  }
 }).catch(() => {});
 
-$("photo").addEventListener("change", () => {
-  const file = $("photo").files[0];
+// Photo Upload & Preview
+function handlePhotoSelect(file) {
   if (!file) return;
   $("preview").src = URL.createObjectURL(file);
   $("preview").hidden = false;
-  $("dropText").innerHTML = `<b>${esc(file.name)}</b><br><small>tap to change</small>`;
-});
-$("clear").addEventListener("click", () => {
-  $("preview").hidden = true;
-  $("dropText").innerHTML = "<b>Choose a photo</b><br><small>JPG or PNG, under 6 MB</small>";
-  $("results").innerHTML = ""; $("understood").hidden = true; $("status").textContent = "";
+  $("dropText").innerHTML = `<span class="drop-title">${esc(file.name)}</span><span class="drop-desc">Tap or drop to change</span>`;
+}
+
+$("photo").addEventListener("change", () => {
+  handlePhotoSelect($("photo").files[0]);
 });
 
+// Drag and Drop
+const dropWell = $("drop");
+dropWell.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropWell.classList.add("dragover");
+});
+dropWell.addEventListener("dragleave", () => {
+  dropWell.classList.remove("dragover");
+});
+dropWell.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropWell.classList.remove("dragover");
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const file = e.dataTransfer.files[0];
+    if (file.type.startsWith("image/")) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      $("photo").files = dt.files;
+      handlePhotoSelect(file);
+    }
+  }
+});
+
+// Collapsible Filters Toggle
+const toggleFiltersBtn = $("toggleFilters");
+const filtersGrid = $("filters");
+toggleFiltersBtn.addEventListener("click", () => {
+  const isOpen = toggleFiltersBtn.getAttribute("aria-expanded") === "true";
+  toggleFiltersBtn.setAttribute("aria-expanded", !isOpen);
+  filtersGrid.hidden = isOpen;
+});
+
+// Clear Form Handler
+$("clear").addEventListener("click", () => {
+  $("preview").hidden = true;
+  $("dropText").innerHTML = `<span class="drop-desc">An old photo of the item helps a lot. Drag it here, or choose a file. JPG or PNG, up to 6 MB.</span>`;
+  $("results").innerHTML = "";
+  $("understood").hidden = true;
+  $("understood").innerHTML = "";
+  $("results-container").hidden = true;
+  $("status").className = "status-text";
+  $("status").textContent = "";
+  $("active-filters").innerHTML = "";
+  claimedItems.clear();
+  lastSearchPayload = null;
+});
+
+// Search without secondary filters
+$("btn-no-filters").addEventListener("click", () => {
+  $("train").value = "";
+  $("station").value = "";
+  $("date").value = "";
+  $("f").requestSubmit();
+});
+
+// Form Submission
 $("f").addEventListener("submit", async (e) => {
   e.preventDefault();
   const fd = new FormData($("f"));
-  if (!$("photo").files.length) fd.delete("photo");
-  $("go").disabled = true; $("status").className = "status"; $("status").textContent = "Searching…";
+  if (!$("photo").files.length) {
+    fd.delete("photo");
+  }
+  lastSearchPayload = {
+    train_no: $("train").value,
+    station: $("station").value,
+    lost_date: $("date").value
+  };
+
+  $("go").disabled = true;
+  $("status").className = "status-text";
+  $("status").textContent = "Searching…";
+
   try {
     const r = await fetch("/api/search", { method: "POST", body: fd });
     const data = await r.json();
-    if (!r.ok) throw new Error(data.detail || "Search failed");
+    if (!r.ok) {
+      throw new Error(data.detail || "Search failed");
+    }
     lastQueryId = data.query_id;
     render(data);
+    $("status").className = "status-text";
     $("status").textContent = `${data.results.length} results in ${Math.round(data.latency_ms)} ms`;
   } catch (err) {
-    $("status").className = "status error"; $("status").textContent = err.message;
-  } finally { $("go").disabled = false; }
+    $("status").className = "status-text error";
+    $("status").textContent = err.message;
+  } finally {
+    $("go").disabled = false;
+  }
 });
 
+// Render Search Results
 function render(data) {
-  const u = data.understood, bits = [];
+  // Query Interpretation Breadcrumb
+  const u = data.understood || {};
+  const bits = [];
   if (u.looking_for) bits.push(`looking for <b>${esc(u.looking_for.replace(/^a photo of /, ""))}</b>`);
   if (u.used_photo) bits.push("<b>your photo</b>");
   if (u.train_no) bits.push(`train <b>${esc(u.train_no)}</b>`);
   if (u.station) bits.push(`station <b>${esc(u.station)}</b>`);
   if (u.lost_date) bits.push(`found within 30 days of <b>${esc(u.lost_date)}</b>`);
-  $("understood").innerHTML = "We understood: " + bits.join(" · ");
-  $("understood").hidden = false;
 
-  if (!data.results.length) {
-    $("results").innerHTML = `<p class="meta">No found items match those filters. Try removing the date or station.</p>`;
+  if (bits.length) {
+    $("understood").innerHTML = "We understood: " + bits.join(" · ");
+    $("understood").hidden = false;
+  } else {
+    $("understood").hidden = true;
+  }
+
+  // Active Filter Dismissible Pills
+  const activeFilters = $("active-filters");
+  activeFilters.innerHTML = "";
+  if (lastSearchPayload) {
+    if (lastSearchPayload.train_no) {
+      activeFilters.appendChild(createFilterTag(`Train ${lastSearchPayload.train_no}`, () => {
+        $("train").value = "";
+        $("f").requestSubmit();
+      }));
+    }
+    if (lastSearchPayload.station) {
+      activeFilters.appendChild(createFilterTag(lastSearchPayload.station, () => {
+        $("station").value = "";
+        $("f").requestSubmit();
+      }));
+    }
+    if (lastSearchPayload.lost_date) {
+      activeFilters.appendChild(createFilterTag(lastSearchPayload.lost_date, () => {
+        $("date").value = "";
+        $("f").requestSubmit();
+      }));
+    }
+  }
+
+  const resultsContainer = $("results-container");
+  resultsContainer.hidden = false;
+
+  const count = data.results.length;
+  $("results-title").textContent = `${count} possible ${count === 1 ? 'match' : 'matches'}`;
+
+  if (!count) {
+    $("results").innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1;">
+        <p style="margin: 0; font-size: 16px; font-weight: 500;">No found items match those filters.</p>
+        <p style="margin: 6px 0 0; font-size: 14px;">Try removing the date or station, or describing the item differently.</p>
+      </div>`;
     return;
   }
-  const label = { strong: "Strong match", possible: "Possible match", weak: "Weak match" };
-  $("results").innerHTML = data.results.map(x => `
-    <article class="card">
-      <img src="${esc(x.image_url)}" alt="${esc(x.category)}" loading="lazy">
-      <div class="body">
-        <div class="top"><span class="cat">${esc(x.category)}</span><span class="badge ${esc(x.strength)}">${label[x.strength]}</span></div>
-        <div class="meta">${esc(x.found_date)} · ${esc(x.station)} · ${esc(x.train_no)} ${esc(x.train_name)}${x.coach ? " · " + esc(x.coach) : ""}</div>
-        <div class="note">${esc(x.note)}</div>
-        ${x.reasons.length ? `<div class="reasons">✓ ${x.reasons.map(esc).join(", ")}</div>` : ""}
-        <div class="credit">${x.credit.author ? "Photo: " + esc(x.credit.author) + " · " : ""}${esc(x.credit.license || "")}${x.credit.source_url ? ` · <a href="${esc(x.credit.source_url)}" target="_blank" rel="noopener">source</a>` : ""}</div>
-        <button type="button" data-id="${esc(x.item_id)}" data-rank="${x.rank}">This is mine</button>
-      </div>
-    </article>`).join("");
+
+  $("results").innerHTML = data.results.map(x => renderCard(x)).join("");
 }
 
+function createFilterTag(label, onRemove) {
+  const span = document.createElement("span");
+  span.className = "filter-tag";
+  span.textContent = label;
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "filter-tag-remove";
+  btn.setAttribute("aria-label", `Remove ${label} filter`);
+  btn.innerHTML = `<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2A241D" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12 M18 6L6 18"></path></svg>`;
+  btn.onclick = onRemove;
+
+  span.appendChild(btn);
+  return span;
+}
+
+function renderCard(x) {
+  let level = "possible";
+  let label = "Possible match";
+  let pct = 35;
+
+  if (x.strength === "strong") {
+    level = "strong";
+    label = "Strong match";
+    pct = Math.min(96, Math.max(82, Math.round((x.score || 3.0) * 26)));
+  } else if (x.strength === "possible") {
+    if ((x.score || 0) >= 2.5) {
+      level = "good";
+      label = "Good match";
+      pct = Math.min(80, Math.max(60, Math.round((x.score || 2.5) * 25)));
+    } else {
+      level = "possible";
+      label = "Possible match";
+      pct = Math.min(58, Math.max(35, Math.round((x.score || 2.0) * 20)));
+    }
+  } else {
+    level = "possible";
+    label = "Possible match";
+    pct = Math.min(35, Math.max(20, Math.round((x.score || 1.5) * 15)));
+  }
+
+  const iconPath = CATEGORY_ICONS[x.category?.toLowerCase()] || DEFAULT_ICON;
+  const isClaimed = claimedItems.has(x.item_id);
+
+  const claimSectionHtml = isClaimed ? `
+    <div class="claim-box">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F5B26" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="claim-check-icon"><path d="M5 12l5 5L20 7"></path></svg>
+      <p class="claim-text">Marked as yours. Take photo ID and quote <strong>${esc(x.item_id)}</strong> at the Lost Property Office. <button type="button" class="btn-undo" data-id="${esc(x.item_id)}" data-rank="${x.rank}" data-station="${esc(x.station)}">Undo</button></p>
+    </div>` : `
+    <div class="card-actions-row">
+      <button type="button" class="btn-mine" data-id="${esc(x.item_id)}" data-rank="${x.rank}" data-station="${esc(x.station)}">This is mine</button>
+      <button type="button" class="btn-details" data-id="${esc(x.item_id)}">Details</button>
+    </div>`;
+
+  return `
+    <article class="result-card card" data-id="${esc(x.item_id)}">
+      <div class="card-media">
+        <img class="card-img" src="${esc(x.image_url)}" alt="${esc(x.category)}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="card-fallback-box" style="display: none;">
+          <svg role="img" aria-label="${esc(x.category)}" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#8C7A60" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="${iconPath}"></path></svg>
+        </div>
+        <span class="card-badge ${level}">${label}</span>
+      </div>
+
+      <div class="card-body">
+        <h3 class="card-title">${esc(x.category)}${x.note ? ': ' + esc(x.note) : ''}</h3>
+        
+        <div class="meter-wrapper">
+          <div role="meter" aria-label="Match strength" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" class="match-meter">
+            <div class="match-meter-bar ${level}" style="width: ${pct}%;"></div>
+          </div>
+        </div>
+
+        <!-- Hidden span preserving .meta formatting for backward compatibility -->
+        <span class="meta" style="display:none">${esc(x.found_date)} · ${esc(x.station)} · ${esc(x.train_no)} ${esc(x.train_name)}</span>
+
+        <dl class="meta-dl">
+          <dt><svg aria-label="Train" role="img" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F5446" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2z M4 10h16 M8 21l2-4 M16 21l-2-4"></path></svg></dt>
+          <dd>${esc(x.train_no)} · ${esc(x.train_name)}${x.coach ? ' (' + esc(x.coach) + ')' : ''}</dd>
+          <dt><svg aria-label="Found at" role="img" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F5446" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"></path></svg></dt>
+          <dd>Found at ${esc(x.station)} · ${esc(x.found_date)}</dd>
+          <dt><svg aria-label="Held at" role="img" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5F5446" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V8l8-5 8 5v13 M9 21v-6h6v6"></path></svg></dt>
+          <dd>Held at ${esc(x.station)} Lost Property Office</dd>
+        </dl>
+
+        ${x.reasons && x.reasons.length ? `<div class="card-reasons">✓ ${x.reasons.map(esc).join(", ")}</div>` : ""}
+
+        <div class="card-actions-area">
+          <div class="claim-slot" id="slot-${esc(x.item_id)}">
+            ${claimSectionHtml}
+          </div>
+          <p class="card-credit">${x.credit?.author ? 'Photo: ' + esc(x.credit.author) + ' · ' : 'Photo: Wikimedia Commons · '}${esc(x.credit?.license || '')}${x.credit?.source_url ? ` · <a href="${esc(x.credit.source_url)}" target="_blank" rel="noopener">source</a>` : ''}</p>
+        </div>
+      </div>
+    </article>`;
+}
+
+// Click Delegation for Claiming and Undo
 $("results").addEventListener("click", async (e) => {
-  const b = e.target.closest("button[data-id]");
-  if (!b || b.classList.contains("done")) return;
-  b.classList.add("done"); b.textContent = "Marked as yours";
-  b.insertAdjacentHTML("afterend", `<div class="claim">Next step: visit the Lost Property Office at <b>${esc(b.closest(".card").querySelector(".meta").textContent.split(" · ")[1])}</b> with a photo ID and proof of ownership, and quote item <b>${esc(b.dataset.id)}</b>.</div>`);
-  fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query_id: lastQueryId || "unknown", item_id: b.dataset.id, rank: Number(b.dataset.rank), action: "this_is_mine" }) });
+  const mineBtn = e.target.closest(".btn-mine");
+  if (mineBtn) {
+    const itemId = mineBtn.dataset.id;
+    const rank = Number(mineBtn.dataset.rank);
+    const station = mineBtn.dataset.station || mineBtn.closest(".card").querySelector(".meta").textContent.split(" · ")[1] || "office";
+
+    claimedItems.add(itemId);
+    const slot = $("slot-" + itemId);
+    if (slot) {
+      slot.innerHTML = `
+        <div class="claim-box">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F5B26" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="claim-check-icon"><path d="M5 12l5 5L20 7"></path></svg>
+          <p class="claim-text">Marked as yours. Take photo ID and quote <strong>${esc(itemId)}</strong> at the ${esc(station)} Lost Property Office. <button type="button" class="btn-undo" data-id="${esc(itemId)}" data-rank="${rank}" data-station="${esc(station)}">Undo</button></p>
+        </div>`;
+    }
+
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query_id: lastQueryId || "unknown",
+          item_id: itemId,
+          rank: rank,
+          action: "this_is_mine"
+        })
+      });
+    } catch (_) {}
+    return;
+  }
+
+  const undoBtn = e.target.closest(".btn-undo");
+  if (undoBtn) {
+    const itemId = undoBtn.dataset.id;
+    const rank = Number(undoBtn.dataset.rank);
+    const station = undoBtn.dataset.station || "office";
+
+    claimedItems.delete(itemId);
+    const slot = $("slot-" + itemId);
+    if (slot) {
+      slot.innerHTML = `
+        <div class="card-actions-row">
+          <button type="button" class="btn-mine" data-id="${esc(itemId)}" data-rank="${rank}" data-station="${esc(station)}">This is mine</button>
+          <button type="button" class="btn-details" data-id="${esc(itemId)}">Details</button>
+        </div>`;
+    }
+
+    try {
+      await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query_id: lastQueryId || "unknown",
+          item_id: itemId,
+          rank: rank,
+          action: "not_mine"
+        })
+      });
+    } catch (_) {}
+    return;
+  }
 });
 
-// Shareable searches: /?q=blue+umbrella runs that search on load (after the submit handler exists).
-const initial = new URLSearchParams(location.search).get("q");
-if (initial) { $("desc").value = initial; $("f").requestSubmit(); }
+// Deep-linking: /?q=... auto-fills and submits query
+const initialParam = new URLSearchParams(location.search).get("q");
+if (initialParam) {
+  $("desc").value = initialParam;
+  $("f").requestSubmit();
+}
 </script>
 </body>
 </html>
