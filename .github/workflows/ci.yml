@@ -1,0 +1,74 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # 1. Fast checks: unit + API tests with tiny stand-in models (seconds).
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+
+  # 2. Model quality gate with the REAL model on the committed gallery.
+  #    A PR that makes retrieval worse turns red here before it can deploy.
+  model-quality:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/model
+          key: model-${{ hashFiles('params.yaml') }}
+      - run: python -m pipeline.fetch_model
+      - run: python -m pipeline.build_index
+      - run: python -m pipeline.evaluate --gate
+      - name: Metrics to job summary
+        if: always()
+        run: |
+          if [ -f artifacts/metrics.json ]; then
+            python - <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          m = json.load(open("artifacts/metrics.json"))["metrics"]
+          print("| metric | value |\n|---|---|")
+          for k, v in m.items():
+              print(f"| {k} | {v} |")
+          EOF
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: metrics
+          path: artifacts/metrics.json
+          if-no-files-found: ignore
+
+  # 3. Build the exact production image and smoke-test it like Vercel would run it.
+  docker:
+    needs: model-quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t khoya-paya:${{ github.sha }} .
+      - run: docker run -d --name app -p 8080:80 khoya-paya:${{ github.sha }}
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 30); do curl -sf localhost:8080/health && break; sleep 2; done
+          curl -sf localhost:8080/health | tee /dev/stderr | grep -q '"status":"ok"'
+          curl -sf -F "description=black backpack lost on 12951" localhost:8080/api/search | grep -q '"results"'
+          docker image ls khoya-paya --format 'Image size: {{.Size}}'
+      - if: failure()
+        run: docker logs app

@@ -1,0 +1,8 @@
+name: khoyapaya
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12   # matches the Dockerfile (python:3.12-slim)
+  - pip
+  - pip:
+      - -r requirements-dev.txt

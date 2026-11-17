@@ -1,0 +1,52 @@
+# `dvc repro` re-runs only the stages whose code, data or params changed.
+# `dvc metrics show` / `dvc metrics diff` compare quality across git commits.
+# `dvc params diff` shows which knobs changed between experiments.
+stages:
+  ingest:
+    cmd: python -m pipeline.ingest
+    deps:
+      - pipeline/ingest.py
+      - data/raw
+    params:
+      - data.max_side
+      - data.blur_faces
+      - data.reference_date
+    outs:
+      - data/gallery:
+          cache: false   # small enough to live in git
+      - data/found_items.csv:
+          cache: false
+
+  fetch_model:
+    cmd: python -m pipeline.fetch_model
+    deps:
+      - pipeline/fetch_model.py
+    params:
+      - model
+    outs:
+      - artifacts/model
+
+  build_index:
+    cmd: python -m pipeline.build_index
+    deps:
+      - pipeline/build_index.py
+      - khoya/clip_onnx.py
+      - artifacts/model
+      - data/gallery
+      - data/found_items.csv
+    outs:
+      - artifacts/index
+
+  evaluate:
+    cmd: python -m pipeline.evaluate --gate
+    deps:
+      - pipeline/evaluate.py
+      - khoya
+      - artifacts/model
+      - artifacts/index
+    params:
+      - search
+      - eval
+    metrics:
+      - artifacts/metrics.json:
+          cache: false

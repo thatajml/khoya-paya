@@ -1,0 +1,10 @@
+-r requirements.txt
+# local pipeline (face blurring during ingest)
+opencv-python-headless==4.14.0.94   # stay on 4.x: OpenCV 5 no longer ships the Haar face cascades
+# tests
+pytest==9.1.1
+httpx==0.28.1
+onnx==1.23.2
+# optional MLOps tooling — install when you want them
+# dvc==3.*
+# mlflow==3.*

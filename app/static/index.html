@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khoya-Paya · Railway Lost & Found</title>
+<meta name="description" content="Describe or photograph what you lost on an Indian Railways train and see matching items held at lost property offices.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f1e7; --paper: #fffdf8; --ink: #1d2433; --muted: #5d6576; --line: #e4dccb;
+    --brand: #1f3a6e; --brand-ink: #fff; --accent: #e2711d; --ok: #1d7a4b; --warn: #a86b00; --weak: #8a8f99;
+    --shadow: 0 1px 2px rgba(29,36,51,.06), 0 6px 20px rgba(29,36,51,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11151d; --paper: #1a202b; --ink: #eef0f4; --muted: #a2a9b7; --line: #2c3442;
+      --brand: #8fb0ef; --brand-ink: #0d1422; --accent: #f29a52; --ok: #5cc690; --warn: #e3b448; --weak: #7d8492;
+      --shadow: 0 1px 2px rgba(0,0,0,.3); }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Inter, system-ui, sans-serif; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px 64px; }
+  header { padding: 32px 0 20px; }
+  .rail { height: 6px; background: repeating-linear-gradient(90deg, var(--brand) 0 28px, transparent 28px 40px); opacity: .9; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 800; font-size: clamp(32px, 6vw, 48px); line-height: 1.05; margin: 18px 0 6px; letter-spacing: -.01em; }
+  h1 span { color: var(--accent); }
+  .lede { color: var(--muted); max-width: 640px; margin: 0; }
+  .demo { margin-top: 14px; font-size: 13px; color: var(--muted); border-left: 3px solid var(--accent); padding: 2px 0 2px 10px; }
+
+  form { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); display: grid; gap: 16px; }
+  label { font-weight: 600; font-size: 14px; display: block; margin-bottom: 6px; }
+  .hint { font-weight: 400; color: var(--muted); }
+  textarea, input, select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  textarea { min-height: 84px; resize: vertical; }
+  textarea:focus, input:focus, select:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .chip { font-size: 13px; border: 1px dashed var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+  .chip:hover { color: var(--ink); border-color: var(--brand); }
+  .row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; }
+  .filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .drop { border: 1.5px dashed var(--line); border-radius: 10px; padding: 12px; display: flex; gap: 12px; align-items: center; min-height: 84px; cursor: pointer; background: var(--bg); }
+  .drop img { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; }
+  .drop small { color: var(--muted); }
+  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button.primary { background: var(--brand); color: var(--brand-ink); border: 0; border-radius: 10px; padding: 12px 22px; font: 600 16px Inter, sans-serif; cursor: pointer; }
+  button.primary:disabled { opacity: .6; cursor: progress; }
+  button.ghost { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font: inherit; }
+  .status { color: var(--muted); font-size: 14px; }
+  .error { color: #c0392b; }
+
+  .understood { margin: 26px 0 12px; font-size: 14px; color: var(--muted); }
+  .understood b { color: var(--ink); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--line); }
+  .body { padding: 12px 14px 14px; display: grid; gap: 6px; flex: 1; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .cat { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 18px; text-transform: capitalize; }
+  .badge { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+  .strong { background: color-mix(in srgb, var(--ok) 15%, transparent); color: var(--ok); }
+  .possible { background: color-mix(in srgb, var(--warn) 15%, transparent); color: var(--warn); }
+  .weak { background: color-mix(in srgb, var(--weak) 15%, transparent); color: var(--weak); }
+  .meta { font-size: 13px; color: var(--muted); }
+  .note { font-size: 14px; }
+  .reasons { font-size: 12px; color: var(--accent); }
+  .card button { margin-top: auto; border: 1px solid var(--brand); color: var(--brand); background: transparent; border-radius: 8px; padding: 8px; font: 600 14px Inter, sans-serif; cursor: pointer; }
+  .card button.done { background: var(--brand); color: var(--brand-ink); }
+  .claim { font-size: 13px; background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+  .credit { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+  .credit a { color: inherit; }
+  footer { margin-top: 48px; font-size: 13px; color: var(--muted); }
+  footer a { color: inherit; }
+  @media (max-width: 720px) { .row, .filters { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="rail"></div>
+<div class="wrap">
+  <header>
+    <h1>Khoya<span>·</span>Paya</h1>
+    <p class="lede">Left something on a train? Describe it in your own words or upload an old photo of it. We match it against items found by railway staff and held at lost property offices.</p>
+    <p class="demo">Prototype. The found-item records are synthetic demo data and the photos come from Wikimedia Commons. Nothing here is an official Indian Railways service.</p>
+  </header>
+
+  <form id="f">
+    <div class="row">
+      <div>
+        <label for="desc">What did you lose? <span class="hint">(colour, brand, anything distinctive)</span></label>
+        <textarea id="desc" name="description" maxlength="500" placeholder="e.g. black backpack with a red keychain, lost on 12951 near Borivali"></textarea>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div>
+        <label for="photo">Have a photo of it? <span class="hint">(optional)</span></label>
+        <label class="drop" id="drop" for="photo">
+          <img id="preview" alt="" hidden>
+          <span id="dropText"><b>Choose a photo</b><br><small>JPG or PNG, under 6 MB</small></span>
+        </label>
+        <input id="photo" name="photo" type="file" accept="image/*" hidden>
+      </div>
+    </div>
+    <div class="filters">
+      <div><label for="train">Train</label><select id="train" name="train_no"><option value="">Any train</option></select></div>
+      <div><label for="station">Station</label><select id="station" name="station"><option value="">Any station</option></select></div>
+      <div><label for="date">Date you lost it</label><input id="date" name="lost_date" type="date"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="go" type="submit">Search found items</button>
+      <button class="ghost" type="reset" id="clear">Clear</button>
+      <span class="status" id="status" role="status"></span>
+    </div>
+  </form>
+
+  <div class="understood" id="understood" hidden></div>
+  <div class="grid" id="results"></div>
+
+  <footer>
+    Built with CLIP (ONNX Runtime) · FastAPI · Docker · Vercel. <a href="/health">health</a> · <a href="/metrics">metrics</a> · <a href="/docs">API docs</a>
+  </footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const examples = [
+  "blue umbrella",
+  "black laptop bag left on Deccan Queen",
+  "red suitcase with wheels, 12951",
+  "steel tiffin box",
+  "brown leather wallet at Dadar",
+];
+let lastQueryId = null;
+
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+examples.forEach(t => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = t;
+  b.onclick = () => { $("desc").value = t; $("f").requestSubmit(); };
+  $("chips").appendChild(b);
+});
+
+fetch("/api/meta").then(r => r.json()).then(m => {
+  m.trains.forEach(t => $("train").add(new Option(`${t.train_no} · ${t.train_name}`, t.train_no)));
+  m.stations.forEach(s => $("station").add(new Option(s, s)));
+}).catch(() => {});
+
+$("photo").addEventListener("change", () => {
+  const file = $("photo").files[0];
+  if (!file) return;
+  $("preview").src = URL.createObjectURL(file);
+  $("preview").hidden = false;
+  $("dropText").innerHTML = `<b>${esc(file.name)}</b><br><small>tap to change</small>`;
+});
+$("clear").addEventListener("click", () => {
+  $("preview").hidden = true;
+  $("dropText").innerHTML = "<b>Choose a photo</b><br><small>JPG or PNG, under 6 MB</small>";
+  $("results").innerHTML = ""; $("understood").hidden = true; $("status").textContent = "";
+});
+
+$("f").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData($("f"));
+  if (!$("photo").files.length) fd.delete("photo");
+  $("go").disabled = true; $("status").className = "status"; $("status").textContent = "Searching…";
+  try {
+    const r = await fetch("/api/search", { method: "POST", body: fd });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.detail || "Search failed");
+    lastQueryId = data.query_id;
+    render(data);
+    $("status").textContent = `${data.results.length} results in ${Math.round(data.latency_ms)} ms`;
+  } catch (err) {
+    $("status").className = "status error"; $("status").textContent = err.message;
+  } finally { $("go").disabled = false; }
+});
+
+function render(data) {
+  const u = data.understood, bits = [];
+  if (u.looking_for) bits.push(`looking for <b>${esc(u.looking_for.replace(/^a photo of /, ""))}</b>`);
+  if (u.used_photo) bits.push("<b>your photo</b>");
+  if (u.train_no) bits.push(`train <b>${esc(u.train_no)}</b>`);
+  if (u.station) bits.push(`station <b>${esc(u.station)}</b>`);
+  if (u.lost_date) bits.push(`found within 30 days of <b>${esc(u.lost_date)}</b>`);
+  $("understood").innerHTML = "We understood: " + bits.join(" · ");
+  $("understood").hidden = false;
+
+  if (!data.results.length) {
+    $("results").innerHTML = `<p class="meta">No found items match those filters. Try removing the date or station.</p>`;
+    return;
+  }
+  const label = { strong: "Strong match", possible: "Possible match", weak: "Weak match" };
+  $("results").innerHTML = data.results.map(x => `
+    <article class="card">
+      <img src="${esc(x.image_url)}" alt="${esc(x.category)}" loading="lazy">
+      <div class="body">
+        <div class="top"><span class="cat">${esc(x.category)}</span><span class="badge ${esc(x.strength)}">${label[x.strength]}</span></div>
+        <div class="meta">${esc(x.found_date)} · ${esc(x.station)} · ${esc(x.train_no)} ${esc(x.train_name)}${x.coach ? " · " + esc(x.coach) : ""}</div>
+        <div class="note">${esc(x.note)}</div>
+        ${x.reasons.length ? `<div class="reasons">✓ ${x.reasons.map(esc).join(", ")}</div>` : ""}
+        <div class="credit">${x.credit.author ? "Photo: " + esc(x.credit.author) + " · " : ""}${esc(x.credit.license || "")}${x.credit.source_url ? ` · <a href="${esc(x.credit.source_url)}" target="_blank" rel="noopener">source</a>` : ""}</div>
+        <button type="button" data-id="${esc(x.item_id)}" data-rank="${x.rank}">This is mine</button>
+      </div>
+    </article>`).join("");
+}
+
+$("results").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-id]");
+  if (!b || b.classList.contains("done")) return;
+  b.classList.add("done"); b.textContent = "Marked as yours";
+  b.insertAdjacentHTML("afterend", `<div class="claim">Next step: visit the Lost Property Office at <b>${esc(b.closest(".card").querySelector(".meta").textContent.split(" · ")[1])}</b> with a photo ID and proof of ownership, and quote item <b>${esc(b.dataset.id)}</b>.</div>`);
+  fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query_id: lastQueryId || "unknown", item_id: b.dataset.id, rank: Number(b.dataset.rank), action: "this_is_mine" }) });
+});
+
+// Shareable searches: /?q=blue+umbrella runs that search on load (after the submit handler exists).
+const initial = new URLSearchParams(location.search).get("q");
+if (initial) { $("desc").value = initial; $("f").requestSubmit(); }
+</script>
+</body>
+</html>

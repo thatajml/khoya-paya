@@ -1,0 +1,10 @@
+[project]
+name = "khoya-paya"
+version = "0.1.0"
+description = "Multimodal (CLIP) lost-and-found matcher for Indian Railways — an end-to-end MLOps project"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

@@ -1,0 +1,14 @@
+.git
+.github
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.dvc/cache
+mlruns
+artifacts
+data/raw
+tests
+*.md
+!README.md

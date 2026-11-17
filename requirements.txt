@@ -1,0 +1,10 @@
+# Serving + build-time pipeline (what goes into the Docker image). No PyTorch!
+fastapi==0.162.4
+uvicorn==0.54.0
+python-multipart==0.0.32
+onnxruntime==1.29.0
+tokenizers==0.23.3
+numpy==2.5.3
+pillow==12.3.0
+prometheus-client==0.26.0
+pyyaml==6.0.3

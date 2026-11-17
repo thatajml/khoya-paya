@@ -1,0 +1,42 @@
+# Single source of truth for every tunable in the project.
+# DVC tracks these keys, so changing one re-runs only the stages that depend on it.
+
+model:
+  hf_repo: Xenova/clip-vit-base-patch32
+  revision: 6b7c523703ae26e39be4b03774966f8571c7f523   # pinned commit = reproducible builds
+  variant: quantized        # "quantized" (int8, ~150 MB) or "fp32" (~600 MB) — compare them with the eval!
+  dir: artifacts/model
+
+data:
+  raw_dir: data/raw                 # raw/<source>/<category>/<image>  (git-ignored)
+  gallery_dir: data/gallery         # cleaned, resized, faces blurred  (committed)
+  items_csv: data/found_items.csv   # one row per found item           (committed)
+  sources_csv: data/seed_sources.csv
+  human_eval_csv: data/eval_queries.csv
+  max_side: 512
+  blur_faces: true
+  reference_date: "2026-11-11"      # synthetic "found dates" are generated relative to this
+  seed: 7
+
+index:
+  dir: artifacts/index
+
+search:
+  top_k: 8
+  train_boost: 0.6          # added to the z-score when the train number matches
+  station_boost: 0.4        # added when the station matches
+  max_days_after_loss: 30   # with a lost date, only items found within this window are shown
+  strong_z: 3.0             # z-score bands shown to users as "Strong" / "Possible" / "Weak" match
+  possible_z: 2.0
+
+eval:
+  seed: 42
+  metrics_path: artifacts/metrics.json
+  gates:                     # the Docker build and CI FAIL if any metric is below its gate
+    img2img_recall_at_5: 0.80
+    text_category_precision_at_5: 0.40
+    human_recall_at_5: 0.50  # only checked when data/eval_queries.csv exists
+
+serving:
+  max_upload_mb: 6
+  intra_op_threads: 1       # Vercel Hobby gives 1 vCPU
