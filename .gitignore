@@ -9,3 +9,4 @@ mlruns/
 .vercel
 .env
 .DS_Store
+.env*
